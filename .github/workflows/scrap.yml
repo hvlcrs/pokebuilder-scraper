@@ -1,0 +1,39 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Scrap
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      latest:
+        description: 'Latest cards'     
+        required: true
+        default: '15814'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "scrap"
+  scrap:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Check out this repo
+        uses: actions/checkout@v2
+      - name: Create sequence
+        run: |-
+          for i in $(seq 1 ${{ github.event.inputs.latest }}); do printf "https://asia.pokemon-card.com/id/card-img/id%08d.png\n" $i; done > urls.txt
+      - name: Fetch latest data from the API endpoint
+        run: |-
+          wget -i urls.txt -P pokemon_card_images --wait=0.5 --user-agent="Mozilla/5.0"
+      - name: Commit and push if the data has changed
+        run: |-
+          git config user.name "Automated"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          timestamp=$(date -u)
+          git commit -m "Latest data: ${timestamp}" || exit 0
+          git push
