@@ -1,4 +1,4 @@
-# pokebuilder-scrapper
+# pokebuilder-scraper
 This repository contains a web scraper designed to collect Pokémon card images from the official Pokémon Asia website, specifically for the Indonesia region. The scraper targets the card database available at https://asia.pokemon-card.com/id.
 
 # Disclaimer
