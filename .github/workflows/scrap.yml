@@ -7,8 +7,12 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
+      from:
+        description: 'Beginning card index'
+        required: true
+        default: '1'
       latest:
-        description: 'Latest cards'     
+        description: 'Latest card index'     
         required: true
         default: '15814'
 
@@ -25,7 +29,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Create sequence
         run: |-
-          for i in $(seq 1 ${{ github.event.inputs.latest }}); do printf "https://asia.pokemon-card.com/id/card-img/id%08d.png\n" $i; done > urls.txt
+          for i in $(seq ${{ github.event.inputs.from }} ${{ github.event.inputs.latest }}); do printf "https://asia.pokemon-card.com/id/card-img/id%08d.png\n" $i; done > urls.txt
       - name: Fetch latest data from the API endpoint
         run: |-
           wget -i urls.txt -P pokemon_card_images --wait=0.5 --user-agent="Mozilla/5.0"
